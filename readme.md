@@ -65,5 +65,19 @@ time=2025-12-26T00:24:53.724+08:00 level=INFO source=server.go:1376 msg="llama r
 
 Also need to make sure the files names `cat-facts.txt` is available with the correct content.
 
+## Improvement TO-DO
+
+- If the question covers multiple topics at the same time, the system may not be able to provide a good answer. This is because the system only retrieves chunks based on the similarity of the query to the chunks, without considering the context of the query.
+
+- The solution could be to have the chatbot to write its own query based on the user's input, then retrieve the knowledge based on the generated query. We can also use multiple queries to retrieve more relevant information.
+
+- The top N results are returned based on the cosine similarity. This may not always give the best results, especially when each chunks contains a lot of information.
+To address this issue, we can use a reranking model to re-rank the retrieved chunks based on their relevance to the query.
+
+- The database is stored in memory, which may not be scalable for large datasets. We can use a more efficient vector database such as Qdrant, Pinecone, pgvector
+We currently consider each sentence to be a chunk. For more complex tasks, we may need to use more sophisticated techniques to break down the dataset into smaller chunks. We can also pre-process each chunk before adding them to the database.
+
+- The language model used in this example is a simple one which only has 1B parameters. For more complex tasks, we may need to use a larger language model.
+
 
 
