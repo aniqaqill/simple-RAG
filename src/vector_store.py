@@ -46,18 +46,22 @@ class VectorStore:
         """
         Retrieves the top_n most similar chunks to the query embedding.
         """
-        search_result = self.client.search(
-            collection_name=self.collection_name,
-            query_vector=query_embedding,
-            limit=top_n
-        )
-        
-        results = []
-        for scored_point in search_result:
-            chunk = scored_point.payload.get("text", "") if scored_point.payload else ""
-            results.append((chunk, scored_point.score))
-        
-        return results
+        try:
+            search_result = self.client.search(
+                collection_name=self.collection_name,
+                query_vector=query_embedding,
+                limit=top_n
+            )
+
+            results = []
+            for scored_point in search_result:
+                chunk = scored_point.payload.get("text", "") if scored_point.payload else ""
+                results.append((chunk, scored_point.score))
+
+            return results
+        except Exception as e:
+            print(f"Error performing search in Qdrant: {e}")
+            raise
     
     def __len__(self):
         # Approximate count
