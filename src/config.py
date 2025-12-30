@@ -6,9 +6,9 @@ def get_windows_host_ip() -> str:
     try:
         # Grabs the gateway IP (your Windows side)
         cmd = "ip route | grep default | awk '{print $3}'"
-        return subprocess.check_output(cmd, shell=True).decode('utf-8').strip()
-    except Exception:
-        return "127.0.0.1" # Fallback
+        return subprocess.check_output(cmd, shell=True, timeout=5).decode('utf-8').strip()
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired, OSError):
+        return "127.0.0.1"  # Fallback
 
 # Network Configuration
 WINDOWS_HOST_IP = get_windows_host_ip()
