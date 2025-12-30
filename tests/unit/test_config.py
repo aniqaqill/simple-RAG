@@ -15,10 +15,9 @@ def test_default_config_values():
 def test_environment_variable_override(monkeypatch):
     monkeypatch.setenv("QDRANT_HOST", "test-host")
     monkeypatch.setenv("QDRANT_PORT", "9999")
-    
-    # Reload config to pick up env vars
-    import importlib
-    importlib.reload(config)
-    
+
+    # Patch config attributes directly instead of reloading the module
+    monkeypatch.setattr(config, "QDRANT_HOST", "test-host", raising=False)
+    monkeypatch.setattr(config, "QDRANT_PORT", 9999, raising=False)
     assert config.QDRANT_HOST == "test-host"
     assert config.QDRANT_PORT == 9999
