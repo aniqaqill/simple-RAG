@@ -4,4 +4,4 @@ __pycache__/
 .vscode/
 qdrant_storage/
 .pytest_cache/
-
+.coverage
