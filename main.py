@@ -12,7 +12,7 @@ def main():
 
     # Load Data
     try:
-        dataset = load_text_file('cat-facts.txt')
+        dataset = load_text_file('dataset/cat-facts.txt')
         print(f'Loaded {len(dataset)} cat facts.')
     except FileNotFoundError:
         print("Error: cat-facts.txt not found. Creating a default one in memory.")
