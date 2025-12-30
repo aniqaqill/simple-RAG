@@ -1,5 +1,5 @@
 import uuid
-from typing import List, Tuple, Any
+from typing import List, Tuple
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
 from .config import QDRANT_HOST, QDRANT_PORT, COLLECTION_NAME
