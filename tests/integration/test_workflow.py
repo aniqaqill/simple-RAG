@@ -1,7 +1,6 @@
 import pytest
 import time
 from src.rag import RAGPipeline
-from src.vector_store import VectorStore
 
 # Mark as integration so it can be skipped or selected specifically
 @pytest.mark.integration
