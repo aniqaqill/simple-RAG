@@ -81,3 +81,50 @@ We currently consider each sentence to be a chunk. For more complex tasks, we ma
 
 
 
+
+
+# Refactoring and Enhancements (v2)
+
+We have successfully refactored the codebase to support a more modular and scalable architecture. This prepares the project for advanced features like reranking and different vector databases.
+
+## New Directory Structure
+The code has been moved from a single `demo.py` file to a structured package in `src/`.
+
+```
+simple-RAG/
+├── src/
+│   ├── config.py          # Configuration & Constants (Models, IP detection)
+│   ├── vector_store.py    # Vector DB logic (InMemory implementation)
+│   ├── rag.py             # RAG Core Logic (Retrieve, Generate)
+│   └── utils.py           # Helper functions
+├── main.py                # New Entry point
+└── ...
+```
+
+## Key Improvements
+- **Modular Design**: Separation of concerns between configuration, storage, and logic.
+- **Automatic IP Detection**: `src/config.py` automatically detects the Windows Host IP when running in WSL.
+- **Configurable**: Models and Base URLs can be overridden via environment variables.
+- **Robustness**: Better error handling for missing files or connection issues.
+
+## How to Run (New)
+Ensure your virtual environment is active and `ollama` is running on Windows.
+
+```bash
+# Activate venv
+source venv/bin/activate
+
+# Run the chatbot
+python main.py
+```
+
+## Testing
+The project includes a comprehensive test suite using `pytest`.
+
+```bash
+# Run all tests
+venv/bin/pytest tests/
+
+# Run unit tests only
+venv/bin/pytest tests/unit/
+```
