@@ -1,5 +1,4 @@
 import pytest
-import os
 from src.utils import load_text_file
 
 def test_load_text_file_success(tmp_path):
