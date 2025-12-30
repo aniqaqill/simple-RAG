@@ -94,7 +94,7 @@ The code has been moved from a single `demo.py` file to a structured package in 
 simple-RAG/
 ├── src/
 │   ├── config.py          # Configuration & Constants (Models, IP detection)
-│   ├── vector_store.py    # Vector DB logic (InMemory implementation)
+│   ├── vector_store.py    # Vector DB logic (Qdrant, persistent vector DB)
 │   ├── rag.py             # RAG Core Logic (Retrieve, Generate)
 │   └── utils.py           # Helper functions
 ├── main.py                # New Entry point
