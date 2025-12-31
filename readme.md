@@ -4,27 +4,24 @@ This are my first trying to build simple RAG
 
 refferece : https://huggingface.co/blog/ngxson/make-your-own-rag
 
-Followed or the give steps and doing some minor changes to adapt to a WSL + Ollama Windows setup. So here's what I did ;
+Followed or the give steps based on the article I tried to enhance while learn to plug in to increase the complexity and deeper understanding of RAG component that are useful to build RAG application to also configured it to adapt with WSL environment + Ollama Windows setup. So here's what I did ;
 
 First of all after going through the article.
 
 Installing and configuring WSL and Ollama for the codebase 
+
 ```bash
-mkdir simple-RAG
-cd simple-RAG
 # Create the virtual environment
 python3 -m venv venv
 
-# Activate it
+# Activate the venv
 source venv/bin/activate
 ```
 Make sure once the virtual enviroment created install necessary library to code from there.
+
 ```bash
-pip install ollama
-
-pip install numpy
+pip install -r requirements.txt
 ```
-
 
 required model to download : 
 ```bash
@@ -38,7 +35,6 @@ In powershell as Admin
 ```bash
 [System.Environment]::SetEnvironmentVariable('OLLAMA_HOST', '0.0.0.0', 'User')
 ```
-
 Restart Ollama , 
 ```bash
 stop-process -name "ollama*" -force
@@ -47,7 +43,6 @@ $env:OLLAMA_HOST="0.0.0.0"; ollama serve
 ```
 
 Now we can see the logs if the Ollama triggered. Its usefull I can see whats happening in the backgrough when we triggered the model.
-
 
 ```powershell
 llama_context: Flash Attention was auto, set to enabled
@@ -63,51 +58,9 @@ time=2025-12-26T00:24:53.724+08:00 level=INFO source=server.go:1376 msg="llama r
 
 ```
 
-Also need to make sure the files names `cat-facts.txt` is available with the correct content.
+Also need to make sure the files names `cat-facts.txt` is available with the correct content from the article.
 
-## Improvement TO-DO
-
-- If the question covers multiple topics at the same time, the system may not be able to provide a good answer. This is because the system only retrieves chunks based on the similarity of the query to the chunks, without considering the context of the query.
-
-- The solution could be to have the chatbot to write its own query based on the user's input, then retrieve the knowledge based on the generated query. We can also use multiple queries to retrieve more relevant information.
-
-- The top N results are returned based on the cosine similarity. This may not always give the best results, especially when each chunks contains a lot of information.
-To address this issue, we can use a reranking model to re-rank the retrieved chunks based on their relevance to the query.
-
-- The database is stored in memory, which may not be scalable for large datasets. We can use a more efficient vector database such as Qdrant, Pinecone, pgvector
-We currently consider each sentence to be a chunk. For more complex tasks, we may need to use more sophisticated techniques to break down the dataset into smaller chunks. We can also pre-process each chunk before adding them to the database.
-
-- The language model used in this example is a simple one which only has 1B parameters. For more complex tasks, we may need to use a larger language model.
-
-
-
-
-
-# Refactoring and Enhancements (v2)
-
-We have successfully refactored the codebase to support a more modular and scalable architecture. This prepares the project for advanced features like reranking and different vector databases.
-
-## New Directory Structure
-The code has been moved from a single `demo.py` file to a structured package in `src/`.
-
-```
-simple-RAG/
-├── src/
-│   ├── config.py          # Configuration & Constants (Models, IP detection)
-│   ├── vector_store.py    # Vector DB logic (Qdrant, persistent vector DB)
-│   ├── rag.py             # RAG Core Logic (Retrieve, Generate)
-│   └── utils.py           # Helper functions
-├── main.py                # New Entry point
-└── ...
-```
-
-## Key Improvements
-- **Modular Design**: Separation of concerns between configuration, storage, and logic.
-- **Automatic IP Detection**: `src/config.py` automatically detects the Windows Host IP when running in WSL.
-- **Configurable**: Models and Base URLs can be overridden via environment variables.
-- **Robustness**: Better error handling for missing files or connection issues.
-
-## How to Run (New)
+## How to Run 
 Ensure your virtual environment is active and `ollama` is running on Windows.
 
 ```bash
@@ -128,3 +81,32 @@ venv/bin/pytest tests/
 # Run unit tests only
 venv/bin/pytest tests/unit/
 ```
+
+## Improvement recommendations by the article
+
+- If the question covers multiple topics at the same time, the system may not be able to provide a good answer. This is because the system only retrieves chunks based on the similarity of the query to the chunks, without considering the context of the query.
+
+- The solution could be to have the chatbot to write its own query based on the user's input, then retrieve the knowledge based on the generated query. We can also use multiple queries to retrieve more relevant information.
+
+- The top N results are returned based on the cosine similarity. This may not always give the best results, especially when each chunks contains a lot of information.
+To address this issue, we can use a reranking model to re-rank the retrieved chunks based on their relevance to the query.
+
+- The database is stored in memory, which may not be scalable for large datasets. We can use a more efficient vector database such as Qdrant, Pinecone, pgvector (done)
+
+- We currently consider each sentence to be a chunk. For more complex tasks, we may need to use more sophisticated techniques to break down the dataset into smaller chunks. We can also pre-process each chunk before adding them to the database.
+
+- The language model used in this example is a simple one which only has 1B parameters. For more complex tasks, we may need to use a larger language model.
+
+# Enhancements
+
+We have successfully refactored the codebase to support a more modular and scalable architecture. This prepares the project for advanced features like reranking and different vector databases.
+
+## New Directory Structure
+The code has been moved from a single `demo.py` file to a structured package in `src/`.
+
+## Key Improvements
+- **Modular Design**: Separation of concerns between configuration, storage, and logic.
+- **Automatic IP Detection**: `src/config.py` automatically detects the Windows Host IP when running in WSL.
+- **Configurable**: Models and Base URLs can be overridden via environment variables.
+- **Robustness**: Better error handling for missing files or connection issues.
+
