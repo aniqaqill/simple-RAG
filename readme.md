@@ -110,3 +110,62 @@ The code has been moved from a single `demo.py` file to a structured package in 
 - **Configurable**: Models and Base URLs can be overridden via environment variables.
 - **Robustness**: Better error handling for missing files or connection issues.
 
+
+
+# Technical Architecture
+
+## RAG Workflow
+
+```mermaid
+graph TD
+    User([User])
+    
+    subgraph App [Python Application]
+        Main[main.py]
+        RAG[src/rag.py: RAGPipeline]
+        VS[src/vector_store.py: VectorStore]
+        Utils[src/utils.py]
+    end
+
+    subgraph External [External Services]
+        Ollama[Ollama API]
+        Qdrant[Qdrant Vector DB]
+    end
+
+    subgraph Data [Data Sources]
+        Dataset[(dataset/cat-facts.txt)]
+    end
+
+    %% Ingestion Flow
+    Main -->|1. Load Docs| Utils
+    Utils -->|Read| Dataset
+    Main -->|2. Index| RAG
+    RAG -->|3. Embed| Ollama
+    RAG -->|4. Store| VS
+    VS -->|Upsert| Qdrant
+
+    %% Query Flow
+    User -->|5. Question| Main
+    Main -->|6. Retrieve| RAG
+    RAG -->|7. Embed Query| Ollama
+    RAG -->|8. Search| VS
+    VS -->|Query| Qdrant
+    Main -->|9. Generate| RAG
+    RAG -->|10. Prompt + Context| Ollama
+    Ollama -->|Stream Response| Main
+    Main -->|11. Answer| User
+```
+
+
+## Mapping to Codebase
+
+| Stage | Files & Classes / Functions | Description |
+| :--- | :--- | :--- |
+| **Dataset** | [`dataset/cat-facts.txt`](./dataset/cat-facts.txt) | Raw text source data. |
+| **Loading** | [`src/utils.py`](./src/utils.py) -> `load_text_file` | Reads the file and splits it into discrete lines/chunks. |
+| **Embedding** | [`src/rag.py`](./src/rag.py) -> `RAGPipeline.embed_text` | Converts text to numerical vectors using **Ollama**. |
+| **Storage** | [`src/vector_store.py`](./src/vector_store.py) -> `VectorStore.add` | Stores chunks and embeddings in **Qdrant**. |
+| **Retrieval** | [`src/rag.py`](./src/rag.py) -> `RAGPipeline.retrieve` | Orchestrates the similarity search process. |
+| **Searching** | [`src/vector_store.py`](./src/vector_store.py) -> `VectorStore.search` | Queries Qdrant for the most relevant context chunks. |
+| **Generation** | [`src/rag.py`](./src/rag.py) -> `RAGPipeline.generate_response` | Sends retrieved context + query to **Ollama (LLM)** for response. |
+| **Output** | [`main.py`](./main.py) | Streams the generated response back to the user. |
